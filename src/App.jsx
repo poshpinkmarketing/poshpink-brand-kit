@@ -194,66 +194,87 @@ const makePDF = (kit, bizName) => {
 
   [0,1,2].forEach(i=>{
     const cx = M + i*(cbW+4);
+    // Box with colored top border accent
     doc.setFillColor(...hexRgb(C.white));
     doc.rect(cx, y, cbW, boxH, "F");
     doc.setDrawColor(...hexRgb(C.softPink));
     doc.setLineWidth(0.4);
     doc.rect(cx, y, cbW, boxH);
-    // Concept label
-    doc.setFont("helvetica","normal");
-    doc.setFontSize(5.5);
-    doc.setTextColor(...hexRgb(C.inkLight));
-    doc.setCharSpace(1.2);
-    doc.text("CONCEPT "+["A","B","C"][i], cx+cbW/2, y+5, {align:"center"});
+    // Colored top accent bar
+    doc.setFillColor(...hexRgb([lc1,lc2,lc3][i]||C.hotPink));
+    doc.rect(cx, y, cbW, 2, "F");
+
+    // Bold concept label
+    doc.setFont("helvetica","bold");
+    doc.setFontSize(7);
+    doc.setTextColor(...hexRgb([lc1,lc2,lc3][i]||C.hotPink));
+    doc.setCharSpace(1.5);
+    doc.text("CONCEPT "+["A","B","C"][i], cx+cbW/2, y+8, {align:"center"});
     doc.setCharSpace(0);
 
     const iconCX = cx + cbW/2;
-    const iconCY = y + 17;
-    const nameY = y + 30;
+    const iconCY = y + 20;
+    const nameY = y + 31;
 
     if(i===0){
-      // Circle
-      doc.setDrawColor(...hexRgb(lc1));
+      // Concept A: Bold circle with monogram centered, thin outer ring
       doc.setFillColor(...hexRgb(lc1));
-      doc.setGState(doc.GState({opacity:0.15}));
-      doc.circle(iconCX, iconCY, 7, "F");
+      doc.setGState(doc.GState({opacity:0.12}));
+      doc.circle(iconCX, iconCY, 9, "F");
       doc.setGState(doc.GState({opacity:1}));
-      doc.setLineWidth(1);
+      doc.setDrawColor(...hexRgb(lc1));
+      doc.setLineWidth(1.2);
+      doc.circle(iconCX, iconCY, 9, "S");
+      doc.setLineWidth(0.3);
       doc.circle(iconCX, iconCY, 7, "S");
       doc.setFont("helvetica","bold");
-      doc.setFontSize(7);
-      doc.setTextColor(...hexRgb(lc4));
-      doc.text(sh2, iconCX, iconCY+2.5, {align:"center"});
+      doc.setFontSize(9);
+      doc.setTextColor(...hexRgb(lc1));
+      doc.text(sh2, iconCX, iconCY+3, {align:"center"});
     } else if(i===1){
-      // Diamond
+      // Concept B: Diamond with monogram, clean lines
       doc.setFillColor(...hexRgb(lc2));
-      doc.setGState(doc.GState({opacity:0.2}));
-      doc.triangle(iconCX, iconCY-8, iconCX+7, iconCY, iconCX, iconCY+8, "F");
-      doc.triangle(iconCX, iconCY-8, iconCX-7, iconCY, iconCX, iconCY+8, "F");
+      doc.setGState(doc.GState({opacity:0.12}));
+      doc.triangle(iconCX, iconCY-9, iconCX+9, iconCY, iconCX, iconCY+9, "F");
+      doc.triangle(iconCX, iconCY-9, iconCX-9, iconCY, iconCX, iconCY+9, "F");
       doc.setGState(doc.GState({opacity:1}));
       doc.setDrawColor(...hexRgb(lc2));
-      doc.setLineWidth(1);
-      doc.triangle(iconCX, iconCY-8, iconCX+7, iconCY, iconCX, iconCY+8, "S");
-      doc.triangle(iconCX, iconCY-8, iconCX-7, iconCY, iconCX, iconCY+8, "S");
+      doc.setLineWidth(1.2);
+      doc.triangle(iconCX, iconCY-9, iconCX+9, iconCY, iconCX, iconCY+9, "S");
+      doc.triangle(iconCX, iconCY-9, iconCX-9, iconCY, iconCX, iconCY+9, "S");
       doc.setFont("helvetica","bold");
-      doc.setFontSize(7);
-      doc.setTextColor(...hexRgb(lc4));
-      doc.text(sh2, iconCX, iconCY+2.5, {align:"center"});
+      doc.setFontSize(9);
+      doc.setTextColor(...hexRgb(lc2));
+      doc.text(sh2, iconCX, iconCY+3, {align:"center"});
     } else {
-      // Rounded square
-      doc.setFillColor(...hexRgb(lc1));
-      doc.setGState(doc.GState({opacity:0.15}));
-      doc.roundedRect(iconCX-7, iconCY-7, 14, 14, 3, 3, "F");
+      // Concept C: Hexagon (using triangles) with monogram
+      const r = 9;
+      const pts = [];
+      for(let a=0;a<6;a++){
+        const ang = (a*60-90)*Math.PI/180;
+        pts.push([iconCX+r*Math.cos(ang), iconCY+r*Math.sin(ang)]);
+      }
+      doc.setFillColor(...hexRgb(lc3||C.softPink));
+      doc.setGState(doc.GState({opacity:0.2}));
+      // Draw filled hexagon using triangles from center
+      for(let a=0;a<6;a++){
+        const p1=pts[a], p2=pts[(a+1)%6];
+        doc.triangle(iconCX,iconCY, p1[0],p1[1], p2[0],p2[1], "F");
+      }
       doc.setGState(doc.GState({opacity:1}));
-      doc.setDrawColor(...hexRgb(lc1));
-      doc.setLineWidth(1);
-      doc.roundedRect(iconCX-7, iconCY-7, 14, 14, 3, 3, "S");
+      doc.setDrawColor(...hexRgb(lc4));
+      doc.setLineWidth(1.2);
+      // Draw hexagon outline
+      for(let a=0;a<6;a++){
+        const p1=pts[a], p2=pts[(a+1)%6];
+        doc.line(p1[0],p1[1],p2[0],p2[1]);
+      }
       doc.setFont("helvetica","bold");
-      doc.setFontSize(7);
+      doc.setFontSize(9);
       doc.setTextColor(...hexRgb(lc4));
-      doc.text(sh2, iconCX, iconCY+2.5, {align:"center"});
+      doc.text(sh2, iconCX, iconCY+3, {align:"center"});
     }
-    // Business name below icon
+    // Business name below — centered, italic
     doc.setFont("helvetica","italic");
     doc.setFontSize(6.5);
     doc.setTextColor(...hexRgb(lc4));
