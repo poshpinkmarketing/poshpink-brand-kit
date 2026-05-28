@@ -167,9 +167,11 @@ const makePDF = (kit, bizName) => {
     } else if(i===1){
       const dx=cx+15,dy=y+20;
       doc.setFillColor(...hexRgb(lc2)); doc.setGState(doc.GState({opacity:0.2}));
-      doc.lines([[8,10],[-8,10],[-8,-10],[8,-10]],[dx,dy-10],"eo","F");
+      doc.triangle(dx,dy-10, dx+10,dy, dx,dy+10, "F");
+      doc.triangle(dx,dy-10, dx-10,dy, dx,dy+10, "F");
       doc.setGState(doc.GState({opacity:1})); doc.setDrawColor(...hexRgb(lc2)); doc.setLineWidth(0.8);
-      doc.lines([[8,10],[-8,10],[-8,-10],[8,-10]],[dx,dy-10],"eo","S");
+      doc.triangle(dx,dy-10, dx+10,dy, dx,dy+10, "S");
+      doc.triangle(dx,dy-10, dx-10,dy, dx,dy+10, "S");
       doc.setFont("helvetica","bold"); doc.setFontSize(7); doc.setTextColor(...hexRgb(lc4)); doc.text(sh2,dx,dy+2,{align:"center"});
       doc.setFont("helvetica","normal"); doc.setFontSize(7); doc.setCharSpace(1); doc.setTextColor(...hexRgb(lc4));
       doc.text(nm.toUpperCase(),cx+26,y+20); doc.setCharSpace(0);
@@ -303,7 +305,7 @@ const FullKit = ({kit,bizName}) => {
     try{
       const doc=makePDF(kit,bizName);
       doc.save(`${(bizName||"brand-kit").replace(/\s+/g,"-").toLowerCase()}-brand-kit.pdf`);
-  } catch(e){
+    } catch(e){
       console.error("PDF error:", e);
       alert("PDF error: " + e.message);
     }
