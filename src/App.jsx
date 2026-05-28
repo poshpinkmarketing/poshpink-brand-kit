@@ -112,22 +112,17 @@ const makePDF = (kit, bizName) => {
   // Background
   doc.setFillColor(...hexRgb(C.blush));
   doc.rect(0,0,W,H,"F");
-
-  // Left accent bar
   doc.setFillColor(...hexRgb(C.plum));
   doc.rect(0,0,4,H,"F");
-
-  // Header band
   doc.setFillColor(...hexRgb(C.plum));
   doc.rect(0,0,W,40,"F");
 
-  // Header: business name (truncated if too long)
-  const displayName = (bizName||"Your Brand").slice(0,30);
+  // Header
+  const displayName = (bizName||"Your Brand").slice(0,28);
   doc.setFont("helvetica","bolditalic");
   doc.setFontSize(22);
   doc.setTextColor(...hexRgb(C.white));
   doc.text(displayName, M+2, 20);
-
   doc.setFont("helvetica","normal");
   doc.setFontSize(7);
   doc.setTextColor(...hexRgb(C.softPink));
@@ -139,25 +134,24 @@ const makePDF = (kit, bizName) => {
 
   let y = 50;
 
-  // Section label helper — no line overlapping text
+  // Section label: draws line ABOVE text (text baseline at yy, line at yy-4)
   const sec = (label, yy) => {
+    doc.setDrawColor(...hexRgb(C.softPink));
+    doc.setLineWidth(0.4);
+    doc.line(M, yy-4, W-M, yy-4);
     doc.setFont("helvetica","normal");
     doc.setFontSize(7);
     doc.setTextColor(...hexRgb(C.berry));
     doc.setCharSpace(2);
     doc.text(label.toUpperCase(), M, yy);
     doc.setCharSpace(0);
-    const tw = doc.getTextWidth(label.toUpperCase()) + 4;
-    doc.setDrawColor(...hexRgb(C.softPink));
-    doc.setLineWidth(0.4);
-    doc.line(M + tw, yy - 2.5, W - M, yy - 2.5);
     return yy + 8;
   };
 
-  // ── BRAND ARCHETYPE ──
+  // BRAND ARCHETYPE
   y = sec("Brand Archetype", y);
   doc.setFont("helvetica","bolditalic");
-  doc.setFontSize(18);
+  doc.setFontSize(17);
   doc.setTextColor(...hexRgb(C.plum));
   doc.text(kit.archetype||"", M, y+6);
   y += 11;
@@ -168,7 +162,7 @@ const makePDF = (kit, bizName) => {
   doc.text(arcLines, M, y);
   y += arcLines.length * 4.2 + 8;
 
-  // ── COLOR PALETTE ──
+  // COLOR PALETTE
   y = sec("Signature Color Palette", y);
   const cols = kit.colors||[];
   const sw=24, sh=18, sg=5;
@@ -183,200 +177,197 @@ const makePDF = (kit, bizName) => {
     doc.setFontSize(5);
     doc.text(c.hex, sx+sw/2, y+sh-3, {align:"center"});
     doc.setTextColor(...hexRgb(C.inkMid));
-    doc.setFontSize(6.5);
-    const nameLines = doc.splitTextToSize(c.name, sw+2);
-    doc.text(nameLines[0], sx+sw/2, y+sh+5, {align:"center"});
+    doc.setFontSize(6);
+    doc.text((c.name||"").slice(0,12), sx+sw/2, y+sh+5, {align:"center"});
   });
   y += sh + 12;
 
-  // ── LOGO CONCEPTS ──
+  // LOGO CONCEPTS
   y = sec("Logo Direction Concepts", y);
   const cbW = (W-M*2-8)/3;
   const nm = (bizName||"Your Brand");
   const sh2 = nm.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
-  // Truncate name for logo display
-  const nmShort = nm.length > 16 ? nm.slice(0,14)+"…" : nm;
+  const nmShort = nm.length > 14 ? nm.slice(0,13)+"." : nm;
   const lc = cols.map(c=>c.hex);
   const lc1=lc[0]||C.hotPink, lc2=lc[1]||C.berry, lc3=lc[2]||C.softPink, lc4=lc[3]||C.plum;
+  const boxH = 36;
 
   [0,1,2].forEach(i=>{
     const cx = M + i*(cbW+4);
     doc.setFillColor(...hexRgb(C.white));
-    doc.rect(cx,y,cbW,32,"F");
+    doc.rect(cx, y, cbW, boxH, "F");
     doc.setDrawColor(...hexRgb(C.softPink));
     doc.setLineWidth(0.4);
-    doc.rect(cx,y,cbW,32);
-    doc.setFontSize(6);
-    doc.setTextColor(...hexRgb(C.inkLight));
-    doc.setCharSpace(1.2);
-    doc.text(`CONCEPT ${["A","B","C"][i]}`, cx+cbW/2, y+5, {align:"center"});
-    doc.setCharSpace(0);
-
-    // Center area for icon
-    const iconX = cx + cbW/2;
-    const iconY = y + 16;
-    const textY = y + 26;
-
-    if(i===0){
-      // Circle monogram - centered
-      doc.setDrawColor(...hexRgb(lc1));
-      doc.setFillColor(...hexRgb(lc1));
-      doc.setGState(doc.GState({opacity:0.12}));
-      doc.circle(iconX, iconY, 8, "F");
-      doc.setGState(doc.GState({opacity:1}));
-      doc.setLineWidth(0.8);
-      doc.circle(iconX, iconY, 8, "S");
-      doc.setFont("helvetica","bolditalic");
-      doc.setFontSize(8);
-      doc.setTextColor(...hexRgb(lc4));
-      doc.text(sh2, iconX, iconY+3, {align:"center"});
-      doc.setFont("helvetica","italic");
-      doc.setFontSize(6.5);
-      doc.setTextColor(...hexRgb(lc4));
-      doc.text(nmShort, cx+cbW/2, textY, {align:"center"});
-    } else if(i===1){
-      // Diamond - centered
-      doc.setFillColor(...hexRgb(lc2));
-      doc.setGState(doc.GState({opacity:0.2}));
-      doc.triangle(iconX,iconY-8, iconX+7,iconY, iconX,iconY+8, "F");
-      doc.triangle(iconX,iconY-8, iconX-7,iconY, iconX,iconY+8, "F");
-      doc.setGState(doc.GState({opacity:1}));
-      doc.setDrawColor(...hexRgb(lc2));
-      doc.setLineWidth(0.8);
-      doc.triangle(iconX,iconY-8, iconX+7,iconY, iconX,iconY+8, "S");
-      doc.triangle(iconX,iconY-8, iconX-7,iconY, iconX,iconY+8, "S");
-      doc.setFont("helvetica","bold");
-      doc.setFontSize(7);
-      doc.setTextColor(...hexRgb(lc4));
-      doc.text(sh2, iconX, iconY+2.5, {align:"center"});
-      doc.setFont("helvetica","italic");
-      doc.setFontSize(6.5);
-      doc.setTextColor(...hexRgb(lc4));
-      doc.text(nmShort, cx+cbW/2, textY, {align:"center"});
-    } else {
-      // Rounded square - centered
-      doc.setFillColor(...hexRgb(lc1));
-      doc.setGState(doc.GState({opacity:0.15}));
-      doc.roundedRect(iconX-8, iconY-8, 16, 16, 4, 4, "F");
-      doc.setGState(doc.GState({opacity:1}));
-      doc.setDrawColor(...hexRgb(lc1));
-      doc.setLineWidth(0.8);
-      doc.roundedRect(iconX-8, iconY-8, 16, 16, 4, 4, "S");
-      doc.setFont("helvetica","bolditalic");
-      doc.setFontSize(8);
-      doc.setTextColor(...hexRgb(lc4));
-      doc.text(sh2, iconX, iconY+3, {align:"center"});
-      doc.setFont("helvetica","italic");
-      doc.setFontSize(6.5);
-      doc.setTextColor(...hexRgb(lc4));
-      doc.text(nmShort, cx+cbW/2, textY, {align:"center"});
-    }
-  });
-  y += 38;
-
-  // ── TYPOGRAPHY ──
-  y = sec("Typography Direction", y);
-  (kit.fonts||[]).forEach((f,i)=>{
-    const bx = M + i*(cbW+4);
-    doc.setFillColor(...hexRgb(C.white));
-    doc.rect(bx,y,cbW,28,"F");
-    doc.setDrawColor(...hexRgb(C.softPink));
-    doc.setLineWidth(0.4);
-    doc.rect(bx,y,cbW,28);
+    doc.rect(cx, y, cbW, boxH);
+    // Concept label
     doc.setFont("helvetica","normal");
     doc.setFontSize(5.5);
     doc.setTextColor(...hexRgb(C.inkLight));
     doc.setCharSpace(1.2);
+    doc.text("CONCEPT "+["A","B","C"][i], cx+cbW/2, y+5, {align:"center"});
+    doc.setCharSpace(0);
+
+    const iconCX = cx + cbW/2;
+    const iconCY = y + 17;
+    const nameY = y + 30;
+
+    if(i===0){
+      // Circle
+      doc.setDrawColor(...hexRgb(lc1));
+      doc.setFillColor(...hexRgb(lc1));
+      doc.setGState(doc.GState({opacity:0.15}));
+      doc.circle(iconCX, iconCY, 7, "F");
+      doc.setGState(doc.GState({opacity:1}));
+      doc.setLineWidth(1);
+      doc.circle(iconCX, iconCY, 7, "S");
+      doc.setFont("helvetica","bold");
+      doc.setFontSize(7);
+      doc.setTextColor(...hexRgb(lc4));
+      doc.text(sh2, iconCX, iconCY+2.5, {align:"center"});
+    } else if(i===1){
+      // Diamond
+      doc.setFillColor(...hexRgb(lc2));
+      doc.setGState(doc.GState({opacity:0.2}));
+      doc.triangle(iconCX, iconCY-8, iconCX+7, iconCY, iconCX, iconCY+8, "F");
+      doc.triangle(iconCX, iconCY-8, iconCX-7, iconCY, iconCX, iconCY+8, "F");
+      doc.setGState(doc.GState({opacity:1}));
+      doc.setDrawColor(...hexRgb(lc2));
+      doc.setLineWidth(1);
+      doc.triangle(iconCX, iconCY-8, iconCX+7, iconCY, iconCX, iconCY+8, "S");
+      doc.triangle(iconCX, iconCY-8, iconCX-7, iconCY, iconCX, iconCY+8, "S");
+      doc.setFont("helvetica","bold");
+      doc.setFontSize(7);
+      doc.setTextColor(...hexRgb(lc4));
+      doc.text(sh2, iconCX, iconCY+2.5, {align:"center"});
+    } else {
+      // Rounded square
+      doc.setFillColor(...hexRgb(lc1));
+      doc.setGState(doc.GState({opacity:0.15}));
+      doc.roundedRect(iconCX-7, iconCY-7, 14, 14, 3, 3, "F");
+      doc.setGState(doc.GState({opacity:1}));
+      doc.setDrawColor(...hexRgb(lc1));
+      doc.setLineWidth(1);
+      doc.roundedRect(iconCX-7, iconCY-7, 14, 14, 3, 3, "S");
+      doc.setFont("helvetica","bold");
+      doc.setFontSize(7);
+      doc.setTextColor(...hexRgb(lc4));
+      doc.text(sh2, iconCX, iconCY+2.5, {align:"center"});
+    }
+    // Business name below icon
+    doc.setFont("helvetica","italic");
+    doc.setFontSize(6.5);
+    doc.setTextColor(...hexRgb(lc4));
+    doc.text(nmShort, iconCX, nameY, {align:"center"});
+  });
+  y += boxH + 6;
+
+  // TYPOGRAPHY
+  y = sec("Typography Direction", y);
+  (kit.fonts||[]).forEach((f,i)=>{
+    const bx = M + i*(cbW+4);
+    doc.setFillColor(...hexRgb(C.white));
+    doc.rect(bx, y, cbW, 26, "F");
+    doc.setDrawColor(...hexRgb(C.softPink));
+    doc.setLineWidth(0.4);
+    doc.rect(bx, y, cbW, 26);
+    doc.setFont("helvetica","normal");
+    doc.setFontSize(5.5);
+    doc.setTextColor(...hexRgb(C.inkLight));
+    doc.setCharSpace(1);
     doc.text((f.role||"").toUpperCase(), bx+4, y+7);
     doc.setCharSpace(0);
+    // Font name in bold italic (won't render actual font but shows name clearly)
     doc.setFont("helvetica","bolditalic");
     doc.setFontSize(10);
     doc.setTextColor(...hexRgb(C.plum));
     doc.text(f.name||"", bx+4, y+16);
     doc.setFont("helvetica","normal");
-    doc.setFontSize(6);
+    doc.setFontSize(5.5);
     doc.setTextColor(...hexRgb(C.inkLight));
     const nl = doc.splitTextToSize(f.note||"", cbW-8);
-    doc.text(nl[0]||"", bx+4, y+23);
+    doc.text(nl[0]||"", bx+4, y+22);
   });
-  y += 34;
+  y += 32;
 
-  // ── BRAND VOICE ──
+  // BRAND VOICE KEYWORDS
   y = sec("Brand Voice & Keywords", y);
-  let kx = M;
-  let ky = y;
+  // Draw all keyword chips with proper sizing
+  const keywords = kit.voiceKeywords||[];
+  const padX = 5, padY = 4, chipH = 8, gap = 3;
   doc.setFontSize(6.5);
-  doc.setCharSpace(0.8);
-  (kit.voiceKeywords||[]).forEach(kw=>{
-    const tw = doc.getTextWidth(kw.toUpperCase()) + 10;
-    if(kx + tw > W-M){ kx=M; ky+=11; }
+  let kx = M, ky = y;
+  keywords.forEach(kw => {
+    const label = kw.toUpperCase();
+    const tw = doc.getTextWidth(label);
+    const chipW = tw + padX*2;
+    if(kx + chipW > W - M) { kx = M; ky += chipH + gap; }
     doc.setDrawColor(...hexRgb(C.bubblegum));
+    doc.setFillColor(...hexRgb(C.white));
     doc.setLineWidth(0.5);
-    doc.rect(kx, ky, tw, 7.5);
+    doc.rect(kx, ky, chipW, chipH, "FD");
     doc.setTextColor(...hexRgb(C.berry));
-    doc.text(kw.toUpperCase(), kx+5, ky+5.2);
-    kx += tw+3;
+    doc.text(label, kx + padX, ky + chipH - padY + 0.5);
+    kx += chipW + gap;
   });
-  doc.setCharSpace(0);
-  y = ky + 13;
+  y = ky + chipH + 8;
 
-  // ── TAGLINE ──
-  if(kit.tagline && y < H-60){
+  // TAGLINE
+  if(kit.tagline && y < H-65){
     doc.setDrawColor(...hexRgb(C.hotPink));
     doc.setLineWidth(1.5);
-    doc.line(M, y, M, y+12);
+    doc.line(M, y+1, M, y+11);
     doc.setFont("helvetica","bolditalic");
     doc.setFontSize(11);
     doc.setTextColor(...hexRgb(C.plum));
-    doc.text(`"${kit.tagline}"`, M+7, y+8);
+    doc.text('"'+kit.tagline+'"', M+7, y+8);
     y += 18;
   }
 
-  // ── BRAND PERSONALITY ──
+  // BRAND PERSONALITY
   if(kit.brandPersonality && y < H-50){
     y = sec("Brand Personality", y);
     doc.setFont("helvetica","normal");
-    doc.setFontSize(8.5);
+    doc.setFontSize(8);
     doc.setTextColor(...hexRgb(C.inkMid));
-    const pl = doc.splitTextToSize(kit.brandPersonality||"", W-M*2);
+    const pl = doc.splitTextToSize(kit.brandPersonality, W-M*2);
     doc.text(pl, M, y);
     y += pl.length*4+8;
   }
 
-  // ── SOCIAL MEDIA ──
+  // SOCIAL MEDIA
   if(kit.socialMediaTip && y < H-45){
     y = sec("Social Media Direction", y);
     doc.setFont("helvetica","normal");
-    doc.setFontSize(8.5);
+    doc.setFontSize(8);
     doc.setTextColor(...hexRgb(C.inkMid));
-    const sl = doc.splitTextToSize(kit.socialMediaTip||"", W-M*2);
+    const sl = doc.splitTextToSize(kit.socialMediaTip, W-M*2);
     doc.text(sl, M, y);
     y += sl.length*4+8;
   }
 
-  // ── SERVICES ──
+  // SERVICES
   if(y < H-40){
     y = sec("Recommended Services", y);
     (kit.services||[]).forEach((svc,i)=>{
       if(y > H-28) return;
       doc.setFont("helvetica","bolditalic");
-      doc.setFontSize(8.5);
+      doc.setFontSize(8);
       doc.setTextColor(...hexRgb(C.hotPink));
-      doc.text(`0${i+1}`, M, y+4);
+      doc.text("0"+(i+1), M, y+4);
       doc.setFont("helvetica","bold");
-      doc.setFontSize(8.5);
+      doc.setFontSize(8);
       doc.setTextColor(...hexRgb(C.plum));
-      doc.text(svc.name||"", M+9, y+4);
+      doc.text(svc.name||"", M+8, y+4);
       doc.setFont("helvetica","normal");
-      doc.setFontSize(7.5);
+      doc.setFontSize(7);
       doc.setTextColor(...hexRgb(C.inkLight));
-      const dl = doc.splitTextToSize(svc.description||"", W-M*2-12);
-      doc.text(dl, M+9, y+9);
+      const dl = doc.splitTextToSize(svc.description||"", W-M*2-10);
+      doc.text(dl, M+8, y+9);
       y += dl.length*3.8+10;
     });
   }
 
-  // ── FOOTER ──
+  // FOOTER
   doc.setFillColor(...hexRgb(C.plum));
   doc.rect(0, H-14, W, 14, "F");
   doc.setFont("helvetica","italic");
@@ -386,6 +377,7 @@ const makePDF = (kit, bizName) => {
 
   return doc;
 };
+
 
 const logoSVGs = (name,colors) => {
   const c1=(colors[0]||{hex:C.hotPink}).hex,c2=(colors[1]||{hex:C.berry}).hex;
