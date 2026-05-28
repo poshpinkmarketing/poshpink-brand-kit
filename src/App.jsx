@@ -303,8 +303,9 @@ const FullKit = ({kit,bizName}) => {
     try{
       const doc=makePDF(kit,bizName);
       doc.save(`${(bizName||"brand-kit").replace(/\s+/g,"-").toLowerCase()}-brand-kit.pdf`);
-    } catch(e){
-      alert("PDF generation failed — please try again.");
+  } catch(e){
+      console.error("PDF error:", e);
+      alert("PDF error: " + e.message);
     }
     setBusy(false);
   };
