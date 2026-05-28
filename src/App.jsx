@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { jsPDF } from "jspdf";
 
 const PAYMENT_LINK = "https://www.poshpinkmarketing.com/product-page/personalized-posh-pink-brand-kit-builder";
 const PRICE = "$47";
@@ -104,16 +105,7 @@ const Spinner = ({msg}) => (
 
 const hexRgb = h => [parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
 
-const loadJsPDF = () => new Promise((res,rej) => {
-  if (window.jspdf){res(window.jspdf.jsPDF);return;}
-  const s=document.createElement("script");
-  s.src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
-  s.onload=()=>res(window.jspdf.jsPDF); s.onerror=rej;
-  document.head.appendChild(s);
-});
-
-const makePDF = async (kit, bizName) => {
-  const jsPDF = await loadJsPDF();
+const makePDF = (kit, bizName) => {
   const doc = new jsPDF({orientation:"portrait",unit:"mm",format:"a4"});
   const W=210,H=297,M=18;
   doc.setFillColor(...hexRgb(C.blush)); doc.rect(0,0,W,H,"F");
@@ -306,10 +298,14 @@ const Teaser = ({kit,onPay}) => (
 
 const FullKit = ({kit,bizName}) => {
   const [busy,setBusy]=useState(false);
-  const download=async()=>{
+  const download=()=>{
     setBusy(true);
-    try{const doc=await makePDF(kit,bizName);doc.save(`${(bizName||"brand-kit").replace(/\s+/g,"-").toLowerCase()}-brand-kit.pdf`);}
-    catch{alert("PDF generation failed — please try again.");}
+    try{
+      const doc=makePDF(kit,bizName);
+      doc.save(`${(bizName||"brand-kit").replace(/\s+/g,"-").toLowerCase()}-brand-kit.pdf`);
+    } catch(e){
+      alert("PDF generation failed — please try again.");
+    }
     setBusy(false);
   };
   return (
