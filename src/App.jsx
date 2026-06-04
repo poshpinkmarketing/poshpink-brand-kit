@@ -15,6 +15,15 @@ const C = {
   ink:       "#1a0a10",
   inkMid:    "#4a2535",
   inkLight:  "#9a6878",
+  // New palette for matched styling
+  p50:       "#FFF0F5",
+  p100:      "#FFD6E7",
+  p200:      "#FFB3CF",
+  p400:      "#F472A8",
+  p600:      "#C2185B",
+  p800:      "#880E4F",
+  bg:        "#FAFAFA",
+  bgAlt:     "#FFF5F7",
 };
 
 const QUESTIONS = [
@@ -31,57 +40,152 @@ const injectStyles = () => {
   const s = document.createElement("style");
   s.id = "ppq-styles";
   s.textContent = `
-    @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+SC:wght@300;400;500;600&family=Raleway:wght@300;400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap');
+
     .ppq*{box-sizing:border-box;margin:0;padding:0}
-    .ppq{font-family:'Raleway',sans-serif;background:${C.blush};color:${C.ink};min-height:100vh}
-    @keyframes ppqUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+    .ppq{
+      font-family:'DM Sans',sans-serif;
+      background:${C.bg};
+      color:${C.ink};
+      min-height:100vh;
+    }
+
+    @keyframes ppqUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
     @keyframes ppqFade{from{opacity:0}to{opacity:1}}
     @keyframes ppqPulse{0%,100%{opacity:.4}50%{opacity:1}}
     @keyframes ppqSpin{to{transform:rotate(360deg)}}
-    .ppq-up{animation:ppqUp .55s cubic-bezier(.22,.61,.36,1) both}
+
+    .ppq-up{animation:ppqUp .5s cubic-bezier(.22,.61,.36,1) both}
     .ppq-fade{animation:ppqFade .4s ease both}
     .ppq-pulse{animation:ppqPulse 1.8s ease-in-out infinite}
-    .ppq-opt{display:flex;align-items:center;gap:16px;padding:15px 20px;margin-bottom:9px;cursor:pointer;border:1.5px solid ${C.softPink};background:${C.white};transition:border-color .18s,background .18s}
-    .ppq-opt:hover,.ppq-opt.on{border-color:${C.hotPink};background:${C.blush}}
-    .ppq-box{width:20px;height:20px;flex-shrink:0;border:1.5px solid ${C.softPink};background:transparent;display:flex;align-items:center;justify-content:center;transition:all .18s}
+
+    .ppq-opt{
+      display:flex;align-items:center;gap:14px;
+      padding:13px 18px;margin-bottom:8px;cursor:pointer;
+      border:0.5px solid ${C.p200};
+      background:${C.white};
+      border-radius:10px;
+      transition:border-color .18s,background .18s,box-shadow .18s;
+    }
+    .ppq-opt:hover,.ppq-opt.on{
+      border-color:${C.hotPink};
+      background:${C.p50};
+      box-shadow:0 2px 12px rgba(255,20,147,.08);
+    }
+    .ppq-box{
+      width:18px;height:18px;flex-shrink:0;
+      border:1.5px solid ${C.p200};
+      background:transparent;border-radius:4px;
+      display:flex;align-items:center;justify-content:center;
+      transition:all .18s;
+    }
     .ppq-box.on{background:${C.hotPink};border-color:${C.hotPink}}
     .ppq-box.circ{border-radius:50%}
-    .ppq-btn{background:${C.plum};color:${C.white};border:none;font-family:'Cormorant SC',serif;font-size:13px;font-weight:500;letter-spacing:.15em;padding:17px 52px;cursor:pointer;transition:background .2s,transform .12s}
-    .ppq-btn:hover{background:${C.berry};transform:translateY(-1px)}
+
+    .ppq-btn{
+      background:${C.p800};
+      color:${C.white};
+      border:none;
+      font-family:'DM Sans',sans-serif;
+      font-size:13px;font-weight:500;
+      letter-spacing:.08em;
+      padding:14px 44px;
+      border-radius:8px;
+      cursor:pointer;
+      transition:background .2s,transform .12s,box-shadow .2s;
+      box-shadow:0 2px 16px rgba(136,14,79,.18);
+    }
+    .ppq-btn:hover{background:${C.berry};transform:translateY(-1px);box-shadow:0 4px 20px rgba(136,14,79,.25)}
     .ppq-btn:active{transform:translateY(0)}
-    .ppq-btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
-    .ppq-btn.hot{background:${C.hotPink}}
-    .ppq-btn.hot:hover{background:${C.berry}}
-    .ppq-btn.ghost{background:transparent;border:1px solid ${C.softPink};color:${C.softPink}}
-    .ppq-btn.ghost:hover{background:rgba(255,255,255,.08)}
-    .ppq-input{width:100%;background:transparent;border:none;border-bottom:1.5px solid ${C.bubblegum};padding:14px 0;font-family:'Great Vibes',cursive;font-size:36px;color:${C.ink};outline:none;transition:border-color .2s}
+    .ppq-btn:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none}
+    .ppq-btn.hot{
+      background:linear-gradient(135deg,${C.hotPink},${C.berry});
+      box-shadow:0 2px 16px rgba(255,20,147,.3);
+    }
+    .ppq-btn.hot:hover{background:linear-gradient(135deg,${C.berry},${C.p800});box-shadow:0 4px 24px rgba(255,20,147,.4)}
+    .ppq-btn.ghost{
+      background:transparent;
+      border:1px solid ${C.p200};
+      color:${C.p600};
+      box-shadow:none;
+    }
+    .ppq-btn.ghost:hover{background:${C.p50};box-shadow:none}
+
+    .ppq-input{
+      width:100%;background:transparent;border:none;
+      border-bottom:1.5px solid ${C.p200};
+      padding:12px 0;
+      font-family:'Cormorant Garamond',serif;
+      font-size:32px;font-style:italic;
+      color:${C.p800};outline:none;
+      transition:border-color .2s;
+    }
     .ppq-input:focus{border-bottom-color:${C.hotPink}}
-    .ppq-input::placeholder{color:${C.bubblegum};opacity:.6}
-    .ppq-chip{display:inline-block;border:1px solid ${C.bubblegum};color:${C.berry};font-family:'Cormorant SC',serif;font-size:11px;letter-spacing:.14em;padding:6px 14px;margin:4px 4px 4px 0}
-    .ppq-label{font-family:'Cormorant SC',serif;font-size:11px;letter-spacing:.22em;color:${C.berry};margin-bottom:18px;text-transform:uppercase}
-    .ppq-back{background:none;border:none;cursor:pointer;font-family:'Cormorant SC',serif;font-size:11px;letter-spacing:.18em;color:${C.inkLight};padding:0}
+    .ppq-input::placeholder{color:${C.p200}}
+
+    .ppq-chip{
+      display:inline-block;
+      border:0.5px solid ${C.p200};
+      color:${C.p600};
+      font-family:'DM Sans',sans-serif;
+      font-size:11px;letter-spacing:.08em;
+      padding:5px 12px;margin:4px 4px 4px 0;
+      border-radius:20px;
+      background:${C.white};
+    }
+    .ppq-label{
+      font-family:'DM Sans',sans-serif;
+      font-size:10px;letter-spacing:.18em;
+      color:${C.p600};margin-bottom:16px;
+      text-transform:uppercase;font-weight:600;
+    }
+    .ppq-back{
+      background:none;border:none;cursor:pointer;
+      font-family:'DM Sans',sans-serif;
+      font-size:12px;letter-spacing:.06em;
+      color:${C.inkLight};padding:0;
+    }
     .ppq-back:hover{color:${C.berry}}
-    .ppq-divider{height:1px;background:${C.softPink};margin:28px 0}
+    .ppq-divider{height:0.5px;background:${C.p100};margin:24px 0}
+
+    .ppq-card{
+      background:${C.white};
+      border:0.5px solid ${C.p100};
+      border-radius:12px;
+      overflow:hidden;
+    }
+    .ppq-section{
+      padding:28px 32px;
+      border-bottom:0.5px solid ${C.p100};
+    }
+    .ppq-section:last-child{border-bottom:none}
   `;
   document.head.appendChild(s);
 };
 
 const Logo = () => (
-  <div style={{marginBottom:36}}>
-    <img src="/logo.png" alt="Posh Pink Marketing" style={{height:52,width:"auto",objectFit:"contain"}}/>
+  <div style={{marginBottom:32}}>
+    <img src="/logo.png" alt="Posh Pink Marketing" style={{height:46,width:"auto",objectFit:"contain"}}/>
   </div>
 );
 
 const Bar = ({cur,tot}) => {
   const pct = Math.round((cur/tot)*100);
   return (
-    <div style={{marginBottom:44}}>
-      <div style={{display:"flex",justifyContent:"space-between",marginBottom:10}}>
-        <span style={{fontFamily:"'Cormorant SC',serif",fontSize:11,letterSpacing:".18em",color:C.inkLight}}>Question {cur} of {tot}</span>
-        <span style={{fontFamily:"'Great Vibes',cursive",fontSize:20,color:C.hotPink}}>{pct}%</span>
+    <div style={{marginBottom:40}}>
+      <div style={{display:"flex",justifyContent:"space-between",marginBottom:8}}>
+        <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,letterSpacing:".06em",color:C.inkLight,fontWeight:500}}>
+          Question {cur} of {tot}
+        </span>
+        <span style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:18,color:C.hotPink}}>{pct}%</span>
       </div>
-      <div style={{height:2,background:C.softPink,borderRadius:1,position:"relative"}}>
-        <div style={{position:"absolute",top:0,left:0,height:"2px",borderRadius:1,width:`${pct}%`,background:`linear-gradient(90deg,${C.berry},${C.hotPink})`,transition:"width .5s cubic-bezier(.22,.61,.36,1)"}}/>
+      <div style={{height:2,background:C.p100,borderRadius:1,position:"relative"}}>
+        <div style={{
+          position:"absolute",top:0,left:0,height:"2px",borderRadius:1,
+          width:`${pct}%`,
+          background:`linear-gradient(90deg,${C.berry},${C.hotPink})`,
+          transition:"width .5s cubic-bezier(.22,.61,.36,1)"
+        }}/>
       </div>
     </div>
   );
@@ -90,16 +194,22 @@ const Bar = ({cur,tot}) => {
 const Opt = ({label,checked,onToggle,radio}) => (
   <div onClick={onToggle} className={`ppq-opt${checked?" on":""}`}>
     <div className={`ppq-box${radio?" circ":""}${checked?" on":""}`}>
-      {checked && <svg width="11" height="8" viewBox="0 0 11 8" fill="none"><polyline points="1,4 4,7 10,1" stroke={C.white} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+      {checked && <svg width="10" height="7" viewBox="0 0 10 7" fill="none"><polyline points="1,3.5 3.5,6 9,1" stroke={C.white} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
     </div>
-    <span style={{fontFamily:"'Raleway',sans-serif",fontSize:14,color:C.inkMid}}>{label}</span>
+    <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:14,color:C.inkMid,fontWeight:400}}>{label}</span>
   </div>
 );
 
 const Spinner = ({msg}) => (
-  <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:28,padding:"80px 0"}}>
-    <div style={{width:48,height:48,border:`2px solid ${C.softPink}`,borderTop:`2px solid ${C.hotPink}`,borderRadius:"50%",animation:"ppqSpin 1s linear infinite"}}/>
-    <p className="ppq-pulse" style={{fontFamily:"'Great Vibes',cursive",fontSize:28,color:C.berry}}>{msg}</p>
+  <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:24,padding:"80px 0"}}>
+    <div style={{
+      width:40,height:40,
+      border:`1.5px solid ${C.p100}`,
+      borderTop:`1.5px solid ${C.hotPink}`,
+      borderRadius:"50%",
+      animation:"ppqSpin 1s linear infinite"
+    }}/>
+    <p className="ppq-pulse" style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:22,color:C.p600}}>{msg}</p>
   </div>
 );
 
@@ -256,42 +366,82 @@ const logoSVGs = (name,colors) => {
 
 const Teaser = ({kit,onPay}) => (
   <div className="ppq-fade">
-    <div style={{background:C.plum,padding:"52px 44px",position:"relative",overflow:"hidden"}}>
-      <div style={{position:"absolute",top:-80,right:-80,width:260,height:260,borderRadius:"50%",border:`1px solid rgba(255,20,147,.1)`,pointerEvents:"none"}}/>
-      <p style={{fontFamily:"'Cormorant SC',serif",fontSize:10,letterSpacing:".28em",color:C.bubblegum,marginBottom:16,opacity:.8}}>Your Brand Identity</p>
-      <h1 style={{fontFamily:"'Great Vibes',cursive",fontSize:52,color:C.white,marginBottom:18,lineHeight:1.1}}>{kit.archetype}</h1>
-      <p style={{fontFamily:"'Raleway',sans-serif",fontSize:14,fontWeight:300,lineHeight:1.95,color:"rgba(251,234,240,.75)",maxWidth:440}}>{kit.archetypeDescription}</p>
+    {/* Archetype hero */}
+    <div style={{
+      background:`linear-gradient(135deg,${C.p800} 0%,${C.plum} 100%)`,
+      padding:"52px 40px",position:"relative",overflow:"hidden"
+    }}>
+      <div style={{position:"absolute",top:-60,right:-60,width:220,height:220,borderRadius:"50%",border:"1px solid rgba(255,20,147,.12)",pointerEvents:"none"}}/>
+      <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,letterSpacing:".2em",color:C.p200,marginBottom:14,opacity:.8,fontWeight:500,textTransform:"uppercase"}}>Your Brand Identity</p>
+      <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:48,color:C.white,marginBottom:16,lineHeight:1.1}}>{kit.archetype}</h1>
+      <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:14,fontWeight:300,lineHeight:1.9,color:"rgba(255,209,226,.8)",maxWidth:440}}>{kit.archetypeDescription}</p>
     </div>
-    <div style={{background:C.white,padding:"36px 44px 32px",borderBottom:`1px solid ${C.softPink}`}}>
+
+    {/* Color palette */}
+    <div style={{background:C.white,padding:"32px 40px 28px",borderBottom:`0.5px solid ${C.p100}`}}>
       <p className="ppq-label">Signature Color Palette</p>
-      <div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
-        {(kit.colors||[]).map((c,i)=>(<div key={i} style={{textAlign:"center"}}><div style={{width:58,height:58,background:c.hex,border:`1px solid ${C.softPink}`,marginBottom:7}}/><p style={{fontFamily:"'Raleway',sans-serif",fontSize:10,color:C.inkLight,letterSpacing:".08em"}}>{c.hex}</p><p style={{fontFamily:"'Cormorant SC',serif",fontSize:11,color:C.inkMid,marginTop:3}}>{c.name}</p></div>))}
+      <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
+        {(kit.colors||[]).map((c,i)=>(
+          <div key={i} style={{textAlign:"center"}}>
+            <div style={{width:56,height:56,background:c.hex,border:`0.5px solid ${C.p100}`,borderRadius:8,marginBottom:6}}/>
+            <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:C.inkLight,letterSpacing:".06em"}}>{c.hex}</p>
+            <p style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:C.inkMid,marginTop:2}}>{c.name}</p>
+          </div>
+        ))}
       </div>
     </div>
+
+    {/* Locked sections */}
     <div style={{position:"relative"}}>
       <div style={{filter:"blur(5px)",userSelect:"none",pointerEvents:"none"}}>
-        <div style={{background:C.blush,padding:"32px 44px 28px",borderBottom:`1px solid ${C.softPink}`}}>
+        <div style={{background:C.bgAlt,padding:"28px 40px 24px",borderBottom:`0.5px solid ${C.p100}`}}>
           <p className="ppq-label">Typography Direction</p>
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
-            {(kit.fonts||[]).map((f,i)=>(<div key={i} style={{padding:"18px",background:C.white,border:`1px solid ${C.softPink}`}}><p style={{fontFamily:"'Cormorant SC',serif",fontSize:10,color:C.inkLight,marginBottom:8}}>{f.role}</p><p style={{fontFamily:"'Great Vibes',cursive",fontSize:24,color:C.ink}}>{f.name}</p></div>))}
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+            {(kit.fonts||[]).map((f,i)=>(
+              <div key={i} style={{padding:"16px",background:C.white,border:`0.5px solid ${C.p100}`,borderRadius:8}}>
+                <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:C.inkLight,marginBottom:8,letterSpacing:".08em",textTransform:"uppercase"}}>{f.role}</p>
+                <p style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:22,color:C.p800}}>{f.name}</p>
+              </div>
+            ))}
           </div>
         </div>
-        <div style={{background:C.white,padding:"32px 44px 28px",borderBottom:`1px solid ${C.softPink}`}}>
+        <div style={{background:C.white,padding:"28px 40px 24px",borderBottom:`0.5px solid ${C.p100}`}}>
           <p className="ppq-label">Logo Direction Concepts</p>
-          <div style={{display:"flex",gap:10}}>{["A","B","C"].map(l=>(<div key={l} style={{flex:1,height:72,background:C.blush,border:`1px solid ${C.softPink}`,display:"flex",alignItems:"center",justifyContent:"center"}}><p style={{fontFamily:"'Cormorant SC',serif",fontSize:11,color:C.inkLight,letterSpacing:".14em"}}>CONCEPT {l}</p></div>))}</div>
+          <div style={{display:"flex",gap:10}}>
+            {["A","B","C"].map(l=>(
+              <div key={l} style={{flex:1,height:68,background:C.bgAlt,border:`0.5px solid ${C.p100}`,borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center"}}>
+                <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:C.inkLight,letterSpacing:".12em",textTransform:"uppercase"}}>Concept {l}</p>
+              </div>
+            ))}
+          </div>
         </div>
-        <div style={{background:C.blush,padding:"28px 44px"}}>
+        <div style={{background:C.bgAlt,padding:"24px 40px"}}>
           <p className="ppq-label">Brand Voice</p>
           <div>{(kit.voiceKeywords||[]).map((kw,i)=><span key={i} className="ppq-chip">{kw}</span>)}</div>
         </div>
       </div>
-      <div style={{position:"absolute",top:0,left:0,right:0,bottom:0,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(251,234,240,.6)"}}>
-        <div style={{textAlign:"center",padding:"36px 40px",background:C.white,border:`1.5px solid ${C.softPink}`,maxWidth:380,boxShadow:"0 8px 40px rgba(75,21,40,.1)"}}>
-          <svg width="34" height="34" viewBox="0 0 34 34" fill="none" style={{marginBottom:14}}><rect x="7" y="15" width="20" height="13" rx="2" stroke={C.hotPink} strokeWidth="1.5" fill="none"/><path d="M11 15v-4a6 6 0 0112 0v4" stroke={C.hotPink} strokeWidth="1.5" strokeLinecap="round" fill="none"/><circle cx="17" cy="21.5" r="1.8" fill={C.hotPink}/></svg>
-          <h3 style={{fontFamily:"'Cormorant SC',serif",fontSize:20,color:C.plum,marginBottom:10}}>Unlock Your Full Brand Kit</h3>
-          <p style={{fontFamily:"'Raleway',sans-serif",fontSize:13,color:C.inkLight,lineHeight:1.9,marginBottom:22}}>Get your complete brand identity — typography, 3 logo concepts, brand personality, social media direction, and a beautiful downloadable PDF.</p>
-          <button className="ppq-btn hot" onClick={onPay} style={{width:"100%",padding:"18px 0",fontSize:"14px",marginBottom:12}}>Unlock & Download — {PRICE}</button>
-          <p style={{fontFamily:"'Raleway',sans-serif",fontSize:11,color:C.inkLight,letterSpacing:".06em"}}>Secure payment · Instant access</p>
+
+      {/* Paywall overlay */}
+      <div style={{position:"absolute",top:0,left:0,right:0,bottom:0,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(250,250,250,.65)",backdropFilter:"blur(2px)"}}>
+        <div style={{
+          textAlign:"center",padding:"36px 36px",
+          background:C.white,
+          border:`0.5px solid ${C.p200}`,
+          borderRadius:16,
+          maxWidth:360,
+          boxShadow:"0 12px 48px rgba(136,14,79,.1)"
+        }}>
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{marginBottom:12}}>
+            <rect x="6" y="14" width="20" height="12" rx="3" stroke={C.hotPink} strokeWidth="1.5" fill="none"/>
+            <path d="M10 14v-4a6 6 0 0112 0v4" stroke={C.hotPink} strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+            <circle cx="16" cy="20" r="1.5" fill={C.hotPink}/>
+          </svg>
+          <h3 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:22,fontWeight:600,color:C.p800,marginBottom:8}}>Unlock Your Full Brand Kit</h3>
+          <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:C.inkLight,lineHeight:1.85,marginBottom:22,fontWeight:300}}>Get your complete brand identity — typography, 3 logo concepts, brand personality, social media direction, and a beautiful downloadable PDF.</p>
+          <button className="ppq-btn hot" onClick={onPay} style={{width:"100%",padding:"15px 0",marginBottom:10}}>
+            Unlock & Download — {PRICE}
+          </button>
+          <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:C.inkLight,letterSpacing:".04em"}}>Secure payment · Instant access</p>
         </div>
       </div>
     </div>
@@ -313,56 +463,112 @@ const FullKit = ({kit,bizName}) => {
   };
   return (
     <div className="ppq-fade">
-      <div style={{background:C.plum,padding:"52px 44px",position:"relative",overflow:"hidden"}}>
-        <div style={{position:"absolute",top:-80,right:-80,width:260,height:260,borderRadius:"50%",border:`1px solid rgba(255,20,147,.1)`,pointerEvents:"none"}}/>
-        <p style={{fontFamily:"'Cormorant SC',serif",fontSize:10,letterSpacing:".28em",color:C.bubblegum,marginBottom:16,opacity:.8}}>Your Brand Identity</p>
-        <h1 style={{fontFamily:"'Great Vibes',cursive",fontSize:52,color:C.white,marginBottom:18,lineHeight:1.1}}>{kit.archetype}</h1>
-        <p style={{fontFamily:"'Raleway',sans-serif",fontSize:14,fontWeight:300,lineHeight:1.95,color:"rgba(251,234,240,.75)",maxWidth:440}}>{kit.archetypeDescription}</p>
+      {/* Archetype hero */}
+      <div style={{
+        background:`linear-gradient(135deg,${C.p800} 0%,${C.plum} 100%)`,
+        padding:"52px 40px",position:"relative",overflow:"hidden"
+      }}>
+        <div style={{position:"absolute",top:-60,right:-60,width:220,height:220,borderRadius:"50%",border:"1px solid rgba(255,20,147,.12)",pointerEvents:"none"}}/>
+        <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,letterSpacing:".2em",color:C.p200,marginBottom:14,opacity:.8,fontWeight:500,textTransform:"uppercase"}}>Your Brand Identity</p>
+        <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:48,color:C.white,marginBottom:16,lineHeight:1.1}}>{kit.archetype}</h1>
+        <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:14,fontWeight:300,lineHeight:1.9,color:"rgba(255,209,226,.8)",maxWidth:440}}>{kit.archetypeDescription}</p>
       </div>
-      <div style={{background:C.white,padding:"36px 44px 32px",borderBottom:`1px solid ${C.softPink}`}}>
+
+      {/* Colors */}
+      <div style={{background:C.white,padding:"32px 40px 28px",borderBottom:`0.5px solid ${C.p100}`}}>
         <p className="ppq-label">Signature Color Palette</p>
-        <div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
-          {(kit.colors||[]).map((c,i)=>(<div key={i} style={{textAlign:"center"}}><div style={{width:62,height:62,background:c.hex,border:`1px solid ${C.softPink}`,marginBottom:8}}/><p style={{fontFamily:"'Raleway',sans-serif",fontSize:10,color:C.inkLight,letterSpacing:".08em"}}>{c.hex}</p><p style={{fontFamily:"'Cormorant SC',serif",fontSize:11,color:C.inkMid,marginTop:3}}>{c.name}</p></div>))}
+        <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
+          {(kit.colors||[]).map((c,i)=>(
+            <div key={i} style={{textAlign:"center"}}>
+              <div style={{width:60,height:60,background:c.hex,border:`0.5px solid ${C.p100}`,borderRadius:8,marginBottom:7}}/>
+              <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,color:C.inkLight,letterSpacing:".06em"}}>{c.hex}</p>
+              <p style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:12,color:C.inkMid,marginTop:2}}>{c.name}</p>
+            </div>
+          ))}
         </div>
       </div>
-      <div style={{background:C.blush,padding:"36px 44px 32px",borderBottom:`1px solid ${C.softPink}`}}>
+
+      {/* Typography */}
+      <div style={{background:C.bgAlt,padding:"32px 40px 28px",borderBottom:`0.5px solid ${C.p100}`}}>
         <p className="ppq-label">Typography Direction</p>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
-          {(kit.fonts||[]).map((f,i)=>(<div key={i} style={{padding:"22px",background:C.white,border:`1px solid ${C.softPink}`}}><p style={{fontFamily:"'Cormorant SC',serif",fontSize:10,letterSpacing:".18em",color:C.inkLight,marginBottom:10}}>{f.role}</p><p style={{fontFamily:"'Great Vibes',cursive",fontSize:28,color:C.ink,marginBottom:7}}>{f.name}</p><p style={{fontFamily:"'Raleway',sans-serif",fontSize:12,color:C.inkLight,lineHeight:1.75}}>{f.note}</p></div>))}
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
+          {(kit.fonts||[]).map((f,i)=>(
+            <div key={i} style={{padding:"20px",background:C.white,border:`0.5px solid ${C.p100}`,borderRadius:10}}>
+              <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,letterSpacing:".14em",color:C.inkLight,marginBottom:8,textTransform:"uppercase",fontWeight:600}}>{f.role}</p>
+              <p style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:26,color:C.p800,marginBottom:6}}>{f.name}</p>
+              <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:C.inkLight,lineHeight:1.7,fontWeight:300}}>{f.note}</p>
+            </div>
+          ))}
         </div>
       </div>
-      <div style={{background:C.white,padding:"36px 44px 32px",borderBottom:`1px solid ${C.softPink}`}}>
+
+      {/* Logo concepts */}
+      <div style={{background:C.white,padding:"32px 40px 28px",borderBottom:`0.5px solid ${C.p100}`}}>
         <p className="ppq-label">Logo Direction Concepts</p>
-        <p style={{fontFamily:"'Raleway',sans-serif",fontSize:12,color:C.inkLight,marginBottom:18,lineHeight:1.8}}>These concepts use your brand colors. Share the PDF with a designer to bring them to life.</p>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10}}>
-          {["A","B","C"].map((letter,i)=>(<div key={i} style={{padding:"16px 10px",background:C.blush,border:`1px solid ${C.softPink}`,textAlign:"center"}}><p style={{fontFamily:"'Cormorant SC',serif",fontSize:9,letterSpacing:".2em",color:C.inkLight,marginBottom:10}}>CONCEPT {letter}</p><div style={{overflow:"hidden",display:"flex",justifyContent:"center"}} dangerouslySetInnerHTML={{__html:logoSVGs(bizName,kit.colors||[])[i]}}/></div>))}
+        <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:C.inkLight,marginBottom:16,lineHeight:1.8,fontWeight:300}}>These concepts use your brand colors. Share the PDF with a designer to bring them to life.</p>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
+          {["A","B","C"].map((letter,i)=>(
+            <div key={i} style={{padding:"14px 8px",background:C.bgAlt,border:`0.5px solid ${C.p100}`,borderRadius:8,textAlign:"center"}}>
+              <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:9,letterSpacing:".16em",color:C.inkLight,marginBottom:8,textTransform:"uppercase",fontWeight:600}}>Concept {letter}</p>
+              <div style={{overflow:"hidden",display:"flex",justifyContent:"center"}} dangerouslySetInnerHTML={{__html:logoSVGs(bizName,kit.colors||[])[i]}}/>
+            </div>
+          ))}
         </div>
       </div>
-      <div style={{background:C.blush,padding:"36px 44px 32px",borderBottom:`1px solid ${C.softPink}`}}>
+
+      {/* Brand voice */}
+      <div style={{background:C.bgAlt,padding:"32px 40px 28px",borderBottom:`0.5px solid ${C.p100}`}}>
         <p className="ppq-label">Brand Voice & Personality</p>
-        <div style={{marginBottom:18}}>{(kit.voiceKeywords||[]).map((kw,i)=><span key={i} className="ppq-chip">{kw}</span>)}</div>
-        <p style={{fontFamily:"'Great Vibes',cursive",fontSize:28,color:C.berry,lineHeight:1.7,borderLeft:`3px solid ${C.hotPink}`,paddingLeft:18,marginBottom:18}}>"{kit.tagline}"</p>
-        {kit.brandPersonality&&<p style={{fontFamily:"'Raleway',sans-serif",fontSize:13,color:C.inkMid,lineHeight:1.8}}>{kit.brandPersonality}</p>}
+        <div style={{marginBottom:16}}>{(kit.voiceKeywords||[]).map((kw,i)=><span key={i} className="ppq-chip">{kw}</span>)}</div>
+        <p style={{
+          fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",
+          fontSize:24,color:C.berry,lineHeight:1.7,
+          borderLeft:`2px solid ${C.hotPink}`,paddingLeft:16,marginBottom:16
+        }}>"{kit.tagline}"</p>
+        {kit.brandPersonality&&<p style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:C.inkMid,lineHeight:1.85,fontWeight:300}}>{kit.brandPersonality}</p>}
       </div>
+
+      {/* Social media */}
       {kit.socialMediaTip&&(
-        <div style={{background:C.white,padding:"36px 44px 32px",borderBottom:`1px solid ${C.softPink}`}}>
+        <div style={{background:C.white,padding:"32px 40px 28px",borderBottom:`0.5px solid ${C.p100}`}}>
           <p className="ppq-label">Social Media Direction</p>
-          <p style={{fontFamily:"'Raleway',sans-serif",fontSize:13,color:C.inkMid,lineHeight:1.8}}>{kit.socialMediaTip}</p>
+          <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:C.inkMid,lineHeight:1.85,fontWeight:300}}>{kit.socialMediaTip}</p>
         </div>
       )}
-      <div style={{background:C.blush,padding:"36px 44px 32px",borderBottom:`1px solid ${C.softPink}`}}>
+
+      {/* Recommended services */}
+      <div style={{background:C.bgAlt,padding:"32px 40px 28px",borderBottom:`0.5px solid ${C.p100}`}}>
         <p className="ppq-label">Recommended Services</p>
-        <div style={{display:"grid",gap:10}}>
-          {(kit.services||[]).map((svc,i)=>(<div key={i} style={{display:"flex",alignItems:"flex-start",gap:16,padding:"18px 20px",background:C.white,border:`1px solid ${C.softPink}`}}><span style={{fontFamily:"'Great Vibes',cursive",fontSize:34,color:C.hotPink,opacity:.4,lineHeight:1,flexShrink:0,marginTop:2}}>{String(i+1).padStart(2,"0")}</span><div><p style={{fontFamily:"'Cormorant SC',serif",fontSize:13,letterSpacing:".1em",color:C.ink,marginBottom:5}}>{svc.name}</p><p style={{fontFamily:"'Raleway',sans-serif",fontSize:13,color:C.inkLight,lineHeight:1.8}}>{svc.description}</p></div></div>))}
+        <div style={{display:"grid",gap:8}}>
+          {(kit.services||[]).map((svc,i)=>(
+            <div key={i} style={{display:"flex",alignItems:"flex-start",gap:14,padding:"16px 18px",background:C.white,border:`0.5px solid ${C.p100}`,borderRadius:10}}>
+              <span style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:28,color:C.hotPink,opacity:.5,lineHeight:1,flexShrink:0,marginTop:2}}>{String(i+1).padStart(2,"0")}</span>
+              <div>
+                <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,letterSpacing:".06em",color:C.p800,marginBottom:4,fontWeight:500}}>{svc.name}</p>
+                <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,color:C.inkLight,lineHeight:1.8,fontWeight:300}}>{svc.description}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-      <div style={{background:C.plum,padding:"52px 44px",textAlign:"center"}}>
-        <p style={{fontFamily:"'Great Vibes',cursive",fontSize:40,color:C.softPink,marginBottom:12}}>Your Brand Kit is Ready</p>
-        <p style={{fontFamily:"'Raleway',sans-serif",fontSize:13,fontWeight:300,color:"rgba(251,234,240,.7)",marginBottom:30,maxWidth:340,margin:"0 auto 30px",lineHeight:1.9}}>Download your one-page PDF — colors, hex codes, fonts, logo concepts and more.</p>
-        <button className="ppq-btn hot" onClick={download} disabled={busy} style={{marginBottom:14,minWidth:240}}>{busy?"Generating PDF…":"⬇ Download Brand Kit PDF"}</button>
+
+      {/* CTA footer */}
+      <div style={{
+        background:`linear-gradient(135deg,${C.p800} 0%,${C.plum} 100%)`,
+        padding:"52px 40px",textAlign:"center"
+      }}>
+        <p style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:36,color:C.softPink,marginBottom:10}}>Your Brand Kit is Ready</p>
+        <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:300,color:"rgba(255,209,226,.75)",marginBottom:28,maxWidth:340,margin:"0 auto 28px",lineHeight:1.9}}>
+          Download your one-page PDF — colors, hex codes, fonts, logo concepts and more.
+        </p>
+        <button className="ppq-btn hot" onClick={download} disabled={busy} style={{marginBottom:14,minWidth:220}}>
+          {busy?"Generating PDF…":"⬇ Download Brand Kit PDF"}
+        </button>
         <br/>
-        <a href="https://www.poshpinkmarketing.com/contact" style={{textDecoration:"none"}}><button className="ppq-btn ghost" style={{marginTop:12}}>Book a Brand Consultation</button></a>
-        <p style={{fontFamily:"'Cormorant SC',serif",fontSize:11,letterSpacing:".15em",color:C.bubblegum,marginTop:20,opacity:.7}}>info@poshpinkmarketing.com</p>
+        <a href="https://www.poshpinkmarketing.com/contact" style={{textDecoration:"none"}}>
+          <button className="ppq-btn ghost" style={{marginTop:12}}>Book a Brand Consultation</button>
+        </a>
+        <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,letterSpacing:".1em",color:C.p200,marginTop:18,opacity:.7}}>info@poshpinkmarketing.com</p>
       </div>
     </div>
   );
@@ -441,54 +647,92 @@ All hex codes must be valid 6-digit hex values.`;
   })();
 
   const pay=()=>{ window.location.href=PAYMENT_LINK; };
-  const wrap={maxWidth:640,margin:"0 auto",padding:"64px 36px"};
+  const wrap={maxWidth:600,margin:"0 auto",padding:"60px 32px"};
 
   return (
     <div className="ppq" style={{minHeight:"100vh"}}>
+
+      {/* Landing */}
       {step===0&&(
         <div className="ppq-up" style={wrap}>
           <Logo/>
-          <p style={{fontFamily:"'Cormorant SC',serif",fontSize:11,letterSpacing:".28em",color:C.berry,marginBottom:20}}>Posh Pink Brand Kit Builder</p>
-          <h1 style={{fontFamily:"'Great Vibes',cursive",fontSize:68,color:C.plum,marginBottom:20,lineHeight:1.05}}>Discover Your<br/>Brand Identity</h1>
-          <p style={{fontFamily:"'Raleway',sans-serif",fontSize:14,fontWeight:300,color:C.inkLight,lineHeight:2,marginBottom:44,maxWidth:400}}>Six thoughtful questions. A fully personalized brand kit — color palette, typography, logo concepts, brand personality, social media direction, and a beautiful downloadable PDF.</p>
+          <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,letterSpacing:".22em",color:C.p600,marginBottom:18,fontWeight:600,textTransform:"uppercase"}}>Posh Pink Brand Kit Builder</p>
+          <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:60,color:C.p800,marginBottom:18,lineHeight:1.05}}>Discover Your<br/>Brand Identity</h1>
+          <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:14,fontWeight:300,color:C.inkLight,lineHeight:1.95,marginBottom:40,maxWidth:400}}>
+            Six thoughtful questions. A fully personalized brand kit — color palette, typography, logo concepts, brand personality, social media direction, and a beautiful downloadable PDF.
+          </p>
           <button className="ppq-btn" onClick={()=>setStep(1)}>Begin the Quiz</button>
-          <p style={{fontFamily:"'Raleway',sans-serif",fontSize:11,color:C.inkLight,marginTop:16,letterSpacing:".1em"}}>About 3 minutes · Full kit {PRICE}</p>
+          <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:C.inkLight,marginTop:14,letterSpacing:".06em"}}>About 3 minutes · Full kit {PRICE}</p>
         </div>
       )}
+
+      {/* Quiz steps */}
       {step>=1&&step<=total&&curQ&&(
         <div key={step} className="ppq-up" style={wrap}>
           <Logo/>
           <Bar cur={step} tot={total}/>
-          <p style={{fontFamily:"'Great Vibes',cursive",fontSize:22,color:C.hotPink,marginBottom:8}}>{curQ.num}</p>
-          <h2 style={{fontFamily:"'Cormorant SC',serif",fontSize:28,fontWeight:400,color:C.ink,marginBottom:8,lineHeight:1.25}}>{curQ.q}</h2>
-          <p style={{fontFamily:"'Raleway',sans-serif",fontSize:12,color:C.inkLight,marginBottom:curQ.type==="multi"?6:28}}>{curQ.hint}</p>
-          {curQ.type==="multi"&&<p style={{fontFamily:"'Raleway',sans-serif",fontSize:11,color:C.bubblegum,fontStyle:"italic",marginBottom:20}}>You can select more than one.</p>}
-          {curQ.type==="text"&&<input className="ppq-input" type="text" placeholder={curQ.placeholder} value={answers[curQ.id]||""} autoFocus onChange={e=>ans(curQ.id,e.target.value,"text")} onKeyDown={e=>{if(e.key==="Enter"&&canGo())next();}}/>}
-          {(curQ.type==="single"||curQ.type==="multi")&&<div>{curQ.options.map(opt=><Opt key={opt} label={opt} radio={curQ.type==="single"} checked={curQ.type==="single"?answers[curQ.id]===opt:(answers[curQ.id]||[]).includes(opt)} onToggle={()=>ans(curQ.id,opt,curQ.type)}/>)}</div>}
-          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginTop:36}}>
-            {step>1?<button className="ppq-back" onClick={()=>setStep(s=>s-1)}>← Back</button>:<div/>}
-            <button className="ppq-btn" onClick={next} disabled={!canGo()}>{step===total?"Generate My Brand Kit":"Continue"}</button>
+          <p style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:18,color:C.hotPink,marginBottom:6}}>{curQ.num}</p>
+          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:28,fontWeight:500,color:C.p800,marginBottom:6,lineHeight:1.25}}>{curQ.q}</h2>
+          <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:12,color:C.inkLight,marginBottom:curQ.type==="multi"?4:24,fontWeight:300}}>{curQ.hint}</p>
+          {curQ.type==="multi"&&<p style={{fontFamily:"'DM Sans',sans-serif",fontSize:11,color:C.p400,fontStyle:"italic",marginBottom:18}}>You can select more than one.</p>}
+
+          {curQ.type==="text"&&(
+            <input
+              className="ppq-input"
+              type="text"
+              placeholder={curQ.placeholder}
+              value={answers[curQ.id]||""}
+              autoFocus
+              onChange={e=>ans(curQ.id,e.target.value,"text")}
+              onKeyDown={e=>{if(e.key==="Enter"&&canGo())next();}}
+            />
+          )}
+          {(curQ.type==="single"||curQ.type==="multi")&&(
+            <div>{curQ.options.map(opt=>(
+              <Opt
+                key={opt} label={opt}
+                radio={curQ.type==="single"}
+                checked={curQ.type==="single"?answers[curQ.id]===opt:(answers[curQ.id]||[]).includes(opt)}
+                onToggle={()=>ans(curQ.id,opt,curQ.type)}
+              />
+            ))}</div>
+          )}
+
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginTop:32}}>
+            {step>1
+              ? <button className="ppq-back" onClick={()=>setStep(s=>s-1)}>← Back</button>
+              : <div/>
+            }
+            <button className="ppq-btn" onClick={next} disabled={!canGo()}>
+              {step===total?"Generate My Brand Kit":"Continue"}
+            </button>
           </div>
         </div>
       )}
-      {step===total+1&&(<div style={wrap}><Logo/><Spinner msg="Crafting your brand profile…"/></div>)}
+
+      {/* Loading */}
+      {step===total+1&&(
+        <div style={wrap}><Logo/><Spinner msg="Crafting your brand profile…"/></div>
+      )}
+
+      {/* Results */}
       {step===total+2&&(
-        <div style={{maxWidth:640,margin:"0 auto"}}>
-          <div style={{padding:"56px 36px 0"}}>
+        <div style={{maxWidth:600,margin:"0 auto"}}>
+          <div style={{padding:"52px 32px 0"}}>
             <Logo/>
-            <p style={{fontFamily:"'Cormorant SC',serif",fontSize:10,letterSpacing:".22em",color:C.inkLight,marginBottom:8}}>Brand Kit prepared for</p>
-            <h2 style={{fontFamily:"'Great Vibes',cursive",fontSize:50,color:C.plum}}>{answers["businessName"]||"Your Brand"}</h2>
+            <p style={{fontFamily:"'DM Sans',sans-serif",fontSize:10,letterSpacing:".18em",color:C.inkLight,marginBottom:6,textTransform:"uppercase",fontWeight:500}}>Brand Kit prepared for</p>
+            <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",fontSize:44,color:C.p800}}>{answers["businessName"]||"Your Brand"}</h2>
             <div className="ppq-divider"/>
           </div>
           {error?(
-            <div style={{padding:"0 36px 60px",textAlign:"center"}}>
-              <p style={{fontFamily:"'Raleway',sans-serif",color:C.inkLight,marginBottom:22}}>{error}</p>
+            <div style={{padding:"0 32px 60px",textAlign:"center"}}>
+              <p style={{fontFamily:"'DM Sans',sans-serif",color:C.inkLight,marginBottom:20,fontWeight:300}}>{error}</p>
               <button className="ppq-btn" onClick={()=>{setError(null);setStep(total);generate();}}>Try Again</button>
             </div>
           ):parsed?(
             paid?<FullKit kit={parsed} bizName={answers["businessName"]}/>:<Teaser kit={parsed} onPay={pay}/>
           ):(
-            <div style={{padding:"0 36px 60px"}}><Spinner msg="Preparing your results…"/></div>
+            <div style={{padding:"0 32px 60px"}}><Spinner msg="Preparing your results…"/></div>
           )}
         </div>
       )}
