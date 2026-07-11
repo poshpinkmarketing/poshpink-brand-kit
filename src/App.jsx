@@ -308,56 +308,96 @@ async function pdf(d,a){
  doc.text(note,M,y,{lineHeightFactor:1.35});
 
  // Final contact and social page
- y=page("Let's Stay Connected","Keep building your brand with Posh Pink Marketing");
- if(lg)try{doc.addImage(lg,"PNG",W/2-31,y-4,62,25)}catch{}
- y+=34;
+ y=page("Let's Stay Connected","");
+ if(lg)try{doc.addImage(lg,"PNG",W/2-28,18,56,22)}catch{}
+
  doc.setFont("helvetica","bold");
- doc.setFontSize(17);
+ doc.setFontSize(26);
  doc.setTextColor(...rgb(C.plum));
- doc.text("Thank You for Choosing Posh Pink",W/2,y,{align:"center"});
- y+=13;
+ doc.text("Let's Stay",W/2,64,{align:"center"});
+
+ doc.setFont("times","bold");
+ doc.setFontSize(34);
+ doc.setTextColor(...rgb(C.rose));
+ doc.text("CONNECTED",W/2,82,{align:"center"});
+
+ doc.setDrawColor(...rgb(C.soft));
+ doc.line(48,92,88,92);
+ doc.line(122,92,162,92);
+ doc.setFillColor(...rgb(C.pink));
+ doc.circle(W/2,92,1.6,"F");
+
  doc.setFont("helvetica","normal");
  doc.setFontSize(9.5);
  doc.setTextColor(...rgb(C.mid));
- const closing=doc.splitTextToSize(
-  "Your Blueprint is the beginning of a brand that feels clear, consistent, and uniquely yours. Save it, revisit it, and use it as your guide as your business grows.",
-  W-60
+ const msg=doc.splitTextToSize(
+  `This Blueprint was created exclusively for ${a.businessName||"your business"}. My goal is to give you clarity, confidence, and a professional roadmap for building a brand that truly represents your business. Whether you're just getting started or refreshing an established brand, I hope these recommendations help you make every marketing decision with purpose. Great brands are built with consistency, intention, and authenticity.`,
+  W-62
  );
- doc.text(closing,W/2,y,{align:"center",lineHeightFactor:1.35});
- y+=closing.length*5+18;
+ doc.text(msg,W/2,106,{align:"center",lineHeightFactor:1.35});
+
+ doc.setFont("times","italic");
+ doc.setFontSize(17);
+ doc.setTextColor(...rgb(C.rose));
+ doc.text("I'm cheering you on every step of the way.",W/2,143,{align:"center"});
+
+ doc.setFont("times","italic");
+ doc.setFontSize(15);
+ doc.text("xo, Tara ♡",W/2,153,{align:"center"});
 
  const socials=[
-  ["Website","www.poshpinkmarketing.com","https://www.poshpinkmarketing.com"],
-  ["Email","hello@poshpinkmarketing.com","mailto:hello@poshpinkmarketing.com"],
-  ["Facebook","facebook.com/poshpinkmarketing","https://facebook.com/poshpinkmarketing"],
-  ["Instagram","@poshpinkmarketing","https://instagram.com/poshpinkmarketing"],
-  ["TikTok","@posh_pink_marketing","https://tiktok.com/@posh_pink_marketing"]
+  ["WEBSITE","www.poshpinkmarketing.com","https://www.poshpinkmarketing.com"],
+  ["EMAIL","hello@poshpinkmarketing.com","mailto:hello@poshpinkmarketing.com"],
+  ["FACEBOOK","facebook.com/poshpinkmarketing","https://facebook.com/poshpinkmarketing"],
+  ["INSTAGRAM","@poshpinkmarketing","https://instagram.com/poshpinkmarketing"],
+  ["TIKTOK","@posh_pink_marketing","https://tiktok.com/@posh_pink_marketing"]
  ];
- socials.forEach(([label,text,url],i)=>{
-  const by=y+i*20;
-  doc.setFillColor(...rgb(i%2===0?C.blush:C.white));
-  doc.setDrawColor(...rgb(C.soft));
-  doc.roundedRect(38,by-8,W-76,15,3,3,"FD");
-  doc.setFont("helvetica","bold");
-  doc.setFontSize(8.5);
-  doc.setTextColor(...rgb(C.rose));
-  doc.text(label.toUpperCase(),48,by+1);
-  doc.setFont("helvetica","normal");
-  doc.setFontSize(9);
-  doc.setTextColor(...rgb(C.plum));
-  doc.textWithLink(text,W-48,by+1,{url,align:"right"});
+
+ let sy=164;
+ socials.forEach(([label,value,url])=>{
+   doc.setFillColor(...rgb(C.blush));
+   doc.setDrawColor(...rgb(C.soft));
+   doc.roundedRect(36,sy,W-72,17,4,4,"FD");
+   doc.setFont("helvetica","bold");
+   doc.setFontSize(8);
+   doc.setTextColor(...rgb(C.rose));
+   doc.text(label,48,sy+6.5);
+   doc.setFont("helvetica","normal");
+   doc.setFontSize(10);
+   doc.setTextColor(...rgb(C.plum));
+   doc.textWithLink(value,W-46,sy+11,{url,align:"right"});
+   sy+=22;
  });
 
- // Add final "Page X of Y" numbering to every page
+ doc.setFont("helvetica","bold");
+ doc.setFontSize(11);
+ doc.setTextColor(...rgb(C.plum));
+ doc.text("YOU'VE GOT THIS!",W/2,274,{align:"center"});
+
+ doc.setFont("helvetica","normal");
+ doc.setFontSize(8.5);
+ doc.setTextColor(...rgb(C.muted));
+ doc.text("CREATED EXCLUSIVELY FOR",W/2,282,{align:"center"});
+
+ doc.setFont("helvetica","bold");
+ doc.setFontSize(10.5);
+ doc.setTextColor(...rgb(C.rose));
+ doc.text((a.businessName||"Your Business").slice(0,38),W/2,288,{align:"center"});
+
+ doc.setFont("helvetica","normal");
+ doc.setFontSize(8);
+ doc.setTextColor(...rgb(C.plum));
+ doc.text("Prepared by Tara • Posh Pink Marketing",W/2,293,{align:"center"});
+
  const totalPages=doc.getNumberOfPages();
  for(let i=1;i<=totalPages;i++){
-  doc.setPage(i);
-  doc.setFillColor(...rgb(C.soft));
-  doc.rect(W-45,H-13,33,8,"F");
-  doc.setFont("helvetica","normal");
-  doc.setFontSize(7);
-  doc.setTextColor(...rgb(C.plum));
-  doc.text(`Page ${i} of ${totalPages}`,W-12,H-7.5,{align:"right"});
+   doc.setPage(i);
+   doc.setFillColor(...rgb(C.soft));
+   doc.rect(W-45,H-13,33,8,"F");
+   doc.setFont("helvetica","normal");
+   doc.setFontSize(7);
+   doc.setTextColor(...rgb(C.plum));
+   doc.text(`Page ${i} of ${totalPages}`,W-12,H-7.5,{align:"right"});
  }
 
  doc.save(`${safe(a.businessName)}-posh-pink-brand-logo-blueprint.pdf`)
