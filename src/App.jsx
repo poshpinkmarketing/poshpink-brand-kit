@@ -103,10 +103,70 @@ export default function App(){
  const set=(id,v,t)=>t==="multi"?setA(p=>{const c=p[id]||[];return{...p,[id]:c.includes(v)?c.filter(x=>x!==v):[...c,v]}}):setA(p=>({...p,[id]:v}));
  async function generate(){
   const mem=Object.values(MEMBERSHIPS).map(m=>`${m.name}: ${m.price}. ${m.summary}`).join("\n");
-  const prompt=`You are an experienced small-business brand strategist and logo-direction specialist working for The Posh Pink Brand.
-Create a complete, practical Brand & Logo Blueprint for "${a.businessName}".
 
-Business details:
+  async function callClaude(prompt,label){
+   const r=await fetch("/.netlify/functions/claude",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({prompt})
+   });
+
+   const raw=await r.text();
+   let j;
+
+   try{j=JSON.parse(raw)}
+   catch{throw new Error(`${label} returned an unreadable response (${r.status}).`)}
+
+   if(!r.ok||!j.result)throw new Error(j.error||`${label} failed (${r.status}).`);
+
+   const cleaned=String(j.result).replace(/```json|```/g,"").trim();
+   const first=cleaned.indexOf("{");
+   const last=cleaned.lastIndexOf("}");
+   if(first<0||last<0||last<=first)throw new Error(`${label} returned an incomplete response.`);
+
+   const rawJson=cleaned.slice(first,last+1);
+
+   try{
+    return JSON.parse(rawJson);
+   }catch(parseError){
+    console.warn(`${label} returned invalid JSON. Attempting repair.`,parseError);
+
+    const repairPrompt=`Repair the malformed JSON below.
+
+Return ONLY the complete corrected JSON.
+Do not include markdown, explanations, comments, or code fences.
+Preserve all existing information.
+Fix missing commas, quotation marks, brackets, braces, trailing commas, and invalid line breaks.
+Before responding, verify that the entire response can be parsed with JSON.parse().
+
+MALFORMED JSON:
+${rawJson}`;
+
+    const repairResponse=await fetch("/.netlify/functions/claude",{
+     method:"POST",
+     headers:{"Content-Type":"application/json"},
+     body:JSON.stringify({prompt:repairPrompt})
+    });
+
+    const repairRaw=await repairResponse.text();
+    let repairJson;
+
+    try{repairJson=JSON.parse(repairRaw)}
+    catch{throw new Error(`${label} repair returned an unreadable response (${repairResponse.status}).`)}
+
+    if(!repairResponse.ok||!repairJson.result)throw new Error(repairJson.error||`${label} formatting repair failed.`);
+
+    const repaired=String(repairJson.result).replace(/```json|```/g,"").trim();
+    const repairedFirst=repaired.indexOf("{");
+    const repairedLast=repaired.lastIndexOf("}");
+    if(repairedFirst<0||repairedLast<0||repairedLast<=repairedFirst)throw new Error(`${label} repair was incomplete.`);
+
+    return JSON.parse(repaired.slice(repairedFirst,repairedLast+1));
+   }
+  }
+
+  const businessDetails=`Business details:
+- Business name: ${a.businessName}
 - Existing tagline: ${a.tagline||"none"}
 - Industry: ${a.industry}
 - Main offer: ${a.offer}
@@ -122,99 +182,68 @@ Business details:
 - Symbols to explore: ${a.symbols||"none"}
 - Logo elements to avoid: ${(a.avoid||[]).join(", ")}
 - Marketing needs: ${(a.marketingNeeds||[]).join(", ")}
-- Budget/support level: ${a.budget}
+- Budget/support level: ${a.budget}`;
+
+  const brandPrompt=`You are an experienced small-business brand strategist working for The Posh Pink Brand.
+
+Create PART ONE of a practical Brand & Logo Blueprint for "${a.businessName}".
+
+${businessDetails}
 
 Use only these commonly available free Canva font names:
 ${CANVA_FONTS.join(", ")}
 
+Return ONLY strict, complete, valid JSON using this exact shape:
+{"archetype":"","archetypeDescription":"","missionStatement":"","brandStory":"","coreValues":["","","",""],"idealCustomer":"","positioningStatement":"","customerExperience":"","brandPromise":"","brandVoice":"","voiceKeywords":["","","","",""],"taglines":["","","","",""],"colors":[{"role":"Primary","hex":"#RRGGBB","name":""},{"role":"Secondary","hex":"#RRGGBB","name":""},{"role":"Accent","hex":"#RRGGBB","name":""},{"role":"Neutral","hex":"#RRGGBB","name":""},{"role":"Background","hex":"#RRGGBB","name":""}],"colorUsage":"","fonts":[{"role":"Display / Heading","name":"","note":""},{"role":"Subheading","name":"","note":""},{"role":"Body","name":"","note":""},{"role":"Accent","name":"","note":""}],"typographyUsage":""}
+
+JSON rules:
+- Use double quotation marks around every key and string value.
+- Include commas between every property and array item.
+- Do not use unescaped quotation marks inside strings.
+- Do not include markdown, comments, explanations, or code fences.
+- Complete and close every array and object.
+- All hex values must be valid six-digit hex codes.
+- Keep the writing concise, useful, encouraging, and specific.
+- Before responding, verify that JSON.parse() can parse the entire response.`;
+
+  const logoMarketingPrompt=`You are an experienced logo-direction and small-business marketing strategist working for The Posh Pink Brand.
+
+Create PART TWO of a practical Brand & Logo Blueprint for "${a.businessName}".
+
+${businessDetails}
+
 Choose exactly one membership recommendation from these accurate details:
 ${mem}
 
-Recommend Blush for foundational marketing, content, social media help, or budgets under about $900.
-Recommend Tulip when website updates, Google Business Profile, organization, planning, strategy, or up to four profiles are important.
-Recommend Diamond when full marketing creation, full strategy, priority support, Google Business support, or up to six profiles are needed.
-Never invent benefits, prices, or guarantees.
+Recommendation rules:
+- Recommend Blush for foundational marketing, content, social media help, or budgets under about $900.
+- Recommend Tulip when website updates, Google Business Profile, organization, planning, strategy, or up to four profiles are important.
+- Recommend Diamond when full marketing creation, full strategy, priority support, Google Business support, or up to six profiles are needed.
+- Never invent benefits, prices, or guarantees.
 
 Return ONLY strict, complete, valid JSON using this exact shape:
+{"logos":[{"styleName":"","description":"","primaryColor":"#RRGGBB","secondaryColor":"#RRGGBB","accentColor":"#RRGGBB","svgStyle":"badge"},{"styleName":"","description":"","primaryColor":"#RRGGBB","secondaryColor":"#RRGGBB","accentColor":"#RRGGBB","svgStyle":"geometric"},{"styleName":"","description":"","primaryColor":"#RRGGBB","secondaryColor":"#RRGGBB","accentColor":"#RRGGBB","svgStyle":"minimal"},{"styleName":"","description":"","primaryColor":"#RRGGBB","secondaryColor":"#RRGGBB","accentColor":"#RRGGBB","svgStyle":"script"},{"styleName":"","description":"","primaryColor":"#RRGGBB","secondaryColor":"#RRGGBB","accentColor":"#RRGGBB","svgStyle":"monogram"}],"logoPrompts":["","","","",""],"socialMediaDirection":"","websiteDirection":"","photographyDirection":"","contentThemes":["","","","",""],"actionPlan":["","","","","","","",""],"membershipRecommendation":{"name":"","price":"","reason":""}}
 
 JSON rules:
-- Use double quotation marks around every key and every string value.
-- Include commas between every object property and every array item.
-- Do not use unescaped quotation marks inside string values.
-- Do not include literal line breaks inside string values.
-- Complete and close every array and object.
+- Use double quotation marks around every key and string value.
+- Include commas between every property and array item.
+- Do not use unescaped quotation marks inside strings.
 - Do not include markdown, comments, explanations, or code fences.
-- Before responding, verify that the entire response can be parsed with JSON.parse().
-{"archetype":"","archetypeDescription":"","missionStatement":"","brandStory":"","coreValues":["","","",""],"idealCustomer":"","positioningStatement":"","customerExperience":"","brandPromise":"","brandVoice":"","voiceKeywords":["","","","",""],"taglines":["","","","",""],"colors":[{"role":"Primary","hex":"#RRGGBB","name":""},{"role":"Secondary","hex":"#RRGGBB","name":""},{"role":"Accent","hex":"#RRGGBB","name":""},{"role":"Neutral","hex":"#RRGGBB","name":""},{"role":"Background","hex":"#RRGGBB","name":""}],"colorUsage":"","fonts":[{"role":"Display / Heading","name":"","note":""},{"role":"Subheading","name":"","note":""},{"role":"Body","name":"","note":""},{"role":"Accent","name":"","note":""}],"typographyUsage":"","logos":[{"styleName":"","description":"","primaryColor":"#RRGGBB","secondaryColor":"#RRGGBB","accentColor":"#RRGGBB","svgStyle":"badge"},{"styleName":"","description":"","primaryColor":"#RRGGBB","secondaryColor":"#RRGGBB","accentColor":"#RRGGBB","svgStyle":"geometric"},{"styleName":"","description":"","primaryColor":"#RRGGBB","secondaryColor":"#RRGGBB","accentColor":"#RRGGBB","svgStyle":"minimal"},{"styleName":"","description":"","primaryColor":"#RRGGBB","secondaryColor":"#RRGGBB","accentColor":"#RRGGBB","svgStyle":"script"},{"styleName":"","description":"","primaryColor":"#RRGGBB","secondaryColor":"#RRGGBB","accentColor":"#RRGGBB","svgStyle":"monogram"}],"logoPrompts":["","","","",""],"socialMediaDirection":"","websiteDirection":"","photographyDirection":"","contentThemes":["","","","",""],"actionPlan":["","","","","","","",""],"membershipRecommendation":{"name":"","price":"","reason":""}}
-All hex values must be valid six-digit hex codes. Keep the advice specific, encouraging, readable, and practical.`;
+- Complete and close every array and object.
+- All hex values must be valid six-digit hex codes.
+- Keep descriptions and prompts useful but concise enough to return quickly.
+- Before responding, verify that JSON.parse() can parse the entire response.`;
+
   try{
-   const r=await fetch("/.netlify/functions/claude",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt})});
-   const raw=await r.text();
-   let j;
-   try{j=JSON.parse(raw)}catch{throw new Error(`The Netlify function returned an unreadable response (${r.status}).`)}
-   if(!r.ok||!j.result)throw new Error(j.error||`AI request failed (${r.status})`);
-   const cleaned=String(j.result).replace(/```json|```/g,"").trim();
-   const first=cleaned.indexOf("{");
-   const last=cleaned.lastIndexOf("}");
-   if(first<0||last<0||last<=first)throw new Error("The AI response was incomplete. The Netlify function may need a higher max_tokens setting.");
-
-   const rawJson=cleaned.slice(first,last+1);
-   let parsed;
-
-   try{
-    parsed=JSON.parse(rawJson);
-   }catch(parseError){
-    console.warn("Claude returned invalid JSON. Attempting automatic repair.",parseError);
-
-    const repairPrompt=`Repair the malformed JSON below.
-
-Return ONLY the complete corrected JSON.
-Do not include markdown, explanations, comments, or code fences.
-Preserve all existing information.
-Fix missing commas, missing quotation marks, invalid quotation marks, unfinished arrays, unfinished objects, trailing commas, and invalid line breaks.
-Do not shorten or summarize the content.
-Before responding, verify that the entire response can be parsed with JSON.parse().
-
-MALFORMED JSON:
-${rawJson}`;
-
-    const repairResponse=await fetch("/.netlify/functions/claude",{
-     method:"POST",
-     headers:{"Content-Type":"application/json"},
-     body:JSON.stringify({prompt:repairPrompt})
-    });
-
-    const repairRaw=await repairResponse.text();
-    let repairJson;
-
-    try{
-     repairJson=JSON.parse(repairRaw);
-    }catch{
-     throw new Error(`The repair request returned an unreadable response (${repairResponse.status}).`);
-    }
-
-    if(!repairResponse.ok||!repairJson.result){
-     throw new Error(repairJson.error||"Claude created the Blueprint, but the formatting repair failed.");
-    }
-
-    const repairedCleaned=String(repairJson.result).replace(/```json|```/g,"").trim();
-    const repairedFirst=repairedCleaned.indexOf("{");
-    const repairedLast=repairedCleaned.lastIndexOf("}");
-
-    if(repairedFirst<0||repairedLast<0||repairedLast<=repairedFirst){
-     throw new Error("Claude returned an incomplete repair response.");
-    }
-
-    try{
-     parsed=JSON.parse(repairedCleaned.slice(repairedFirst,repairedLast+1));
-    }catch(secondParseError){
-     console.error("Claude repair still returned invalid JSON.",secondParseError);
-     throw new Error("Claude returned invalid formatting twice. Please try generating the Blueprint again.");
-    }
-   }
-
-   setD(parsed);setStep(total+2)
-  }catch(e){console.error(e);setErr(`Something went wrong while creating your Blueprint. ${e.message}`);setStep(total+2)}
+   const brandData=await callClaude(brandPrompt,"Brand strategy");
+   const logoMarketingData=await callClaude(logoMarketingPrompt,"Logo and marketing strategy");
+   setD({...brandData,...logoMarketingData});
+   setStep(total+2);
+  }catch(e){
+   console.error(e);
+   setErr(`Something went wrong while creating your Blueprint. ${e.message}`);
+   setStep(total+2);
+  }
  }
  const next=()=>step<total?setStep(step+1):(setStep(total+1),generate());
  return <div className="app">{step===0&&<div className="shell"><Logo/><p className="k" style={{marginTop:28}}>The Posh Pink Brand & Logo Blueprint</p><h1 className="title">Build a Brand<br/>That Feels Like You.</h1><p className="copy">Answer a guided set of questions and receive a personalized brand direction—including your archetype, messaging, color palette, free Canva font recommendations, five editable SVG logo concepts, AI-ready logo prompts, and a multi-page downloadable Blueprint.</p><button className="btn" onClick={()=>setStep(1)}>Build My Brand Blueprint</button><p style={{color:C.muted,fontSize:12}}>About 7–10 minutes</p></div>}
