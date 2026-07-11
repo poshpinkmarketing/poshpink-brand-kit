@@ -68,14 +68,19 @@ async function pdf(d,a){
  const footer=()=>{
   doc.setFillColor(...rgb(C.soft));
   doc.rect(0,H-18,W,18,"F");
-  if(lg)try{doc.addImage(lg,"PNG",12,H-15.5,26,10.5)}catch{}
-  doc.setFont("helvetica","bold");
-  doc.setFontSize(7.2);
-  doc.setTextColor(...rgb(C.plum));
-  doc.text("hello@poshpinkmarketing.com",48,H-10.5);
-  doc.text("www.poshpinkmarketing.com",48,H-5.5);
+
+  if(lg)try{doc.addImage(lg,"PNG",12,H-15.2,27,10.5)}catch{}
+
   doc.setFont("helvetica","normal");
-  doc.text("The Posh Pink Brand & Logo Blueprint",W-12,H-7.5,{align:"right"});
+  doc.setFontSize(6.8);
+  doc.setTextColor(...rgb(C.muted));
+  doc.text("PREPARED EXCLUSIVELY FOR",W/2,H-10.7,{align:"center"});
+
+  doc.setFont("helvetica","bold");
+  doc.setFontSize(8.5);
+  doc.setTextColor(...rgb(C.plum));
+  const footerName=(a.businessName||"Your Business").slice(0,34);
+  doc.text(footerName,W/2,H-5.4,{align:"center"});
  };
  const watermark=()=>{
   if(!lg)return;
@@ -341,10 +346,6 @@ async function pdf(d,a){
  doc.setTextColor(...rgb(C.rose));
  doc.text("I'm cheering you on every step of the way.",W/2,143,{align:"center"});
 
- doc.setFont("times","italic");
- doc.setFontSize(15);
- doc.text("xo, Tara ♡",W/2,153,{align:"center"});
-
  const socials=[
   ["WEBSITE","www.poshpinkmarketing.com","https://www.poshpinkmarketing.com"],
   ["EMAIL","hello@poshpinkmarketing.com","mailto:hello@poshpinkmarketing.com"],
@@ -353,7 +354,7 @@ async function pdf(d,a){
   ["TIKTOK","@posh_pink_marketing","https://tiktok.com/@posh_pink_marketing"]
  ];
 
- let sy=164;
+ let sy=154;
  socials.forEach(([label,value,url])=>{
    doc.setFillColor(...rgb(C.blush));
    doc.setDrawColor(...rgb(C.soft));
@@ -374,30 +375,13 @@ async function pdf(d,a){
  doc.setTextColor(...rgb(C.plum));
  doc.text("YOU'VE GOT THIS!",W/2,274,{align:"center"});
 
- doc.setFont("helvetica","normal");
- doc.setFontSize(8.5);
- doc.setTextColor(...rgb(C.muted));
- doc.text("CREATED EXCLUSIVELY FOR",W/2,282,{align:"center"});
-
- doc.setFont("helvetica","bold");
- doc.setFontSize(10.5);
- doc.setTextColor(...rgb(C.rose));
- doc.text((a.businessName||"Your Business").slice(0,38),W/2,288,{align:"center"});
-
- doc.setFont("helvetica","normal");
- doc.setFontSize(8);
- doc.setTextColor(...rgb(C.plum));
- doc.text("Prepared by Tara • Posh Pink Marketing",W/2,293,{align:"center"});
-
  const totalPages=doc.getNumberOfPages();
  for(let i=1;i<=totalPages;i++){
    doc.setPage(i);
-   doc.setFillColor(...rgb(C.soft));
-   doc.rect(W-45,H-13,33,8,"F");
    doc.setFont("helvetica","normal");
    doc.setFontSize(7);
    doc.setTextColor(...rgb(C.plum));
-   doc.text(`Page ${i} of ${totalPages}`,W-12,H-7.5,{align:"right"});
+   doc.text(`Page ${i} of ${totalPages}`,W-12,H-7.2,{align:"right"});
  }
 
  doc.save(`${safe(a.businessName)}-posh-pink-brand-logo-blueprint.pdf`)
